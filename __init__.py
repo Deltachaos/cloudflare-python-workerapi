@@ -1,3 +1,4 @@
+import re
 from workers import Response
 from urllib.parse import urlparse, parse_qs
 
@@ -22,7 +23,7 @@ class JsonResponse(CloudflareResponse):
     def convert(self):
         return Response.json(self.content, self.status_code, self.headers)
 
-class WorkerAPI:
+class FastAPI:
     def __init__(self):
         self.routes = {}
 
@@ -68,17 +69,25 @@ class WorkerAPI:
 
         return decorator
 
+    def match_route(self, path):
+        for (route, method), handler in self.routes.items():
+            pattern = re.sub(r"{(\w+)}", r"(?P<\1>[^/]+)", route)
+            match = re.fullmatch(pattern, path)
+            if match:
+                return handler, match.groupdict()
+        return None, {}
+
     async def __call__(self, request, env):
         url = urlparse(request.url)
         path = url.path
         query = parse_qs(url.query)
 
-        for (route, method), handler in self.routes.items():
-            if route == path and request.method == method:
-                response = await handler(**{k: v[0] for k, v in query.items()})
-                if not isinstance(response, CloudflareResponse):
-                    response = JsonResponse(response)
-                return response
+        handler, params = self.match_route(path)
+        if handler and request.method == "GET":
+            response = await handler(**params, **{k: v[0] for k, v in query.items()})
+            if not isinstance(response, CloudflareResponse):
+                response = JsonResponse(response)
+            return response
 
         return JsonResponse({"error": "Not found"}, 404)
 
