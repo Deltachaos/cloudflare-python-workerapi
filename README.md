@@ -22,7 +22,7 @@ git submodule add https://github.com/Deltachaos/cloudflare-python-workerapi work
 Then, you can import it in your project as follows:
 
 ```python
-from workerapi import WorkerAPI
+from workerapi import FastAPI
 ```
 
 ## Example Usage
@@ -32,9 +32,9 @@ A simple example using WorkerAPI:
 ### `src/main.py`
 
 ```python
-from workerapi import WorkerAPI
+from workerapi import FastAPI
 
-app = WorkerAPI()
+app = FastAPI()
 
 @app.get("/{user}")
 async def root(user):
