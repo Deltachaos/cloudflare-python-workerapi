@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urlparse, parse_qs
-from responses import CloudflareResponse, JsonResponse
+from workerapi.responses import CloudflareResponse, JsonResponse
 
 class FastAPI:
     def __init__(self):
