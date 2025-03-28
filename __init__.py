@@ -84,7 +84,9 @@ class FastAPI:
 
         handler, params = self.match_route(path)
         if handler and request.method == "GET":
-            response = await handler(**params, **{k: v[0] for k, v in query.items()})
+            merged_params = {**query, **params}
+            merged_params = {k: v[0] for k, v in merged_params.items()}
+            response = await handler(**merged_params)
             if not isinstance(response, CloudflareResponse):
                 response = JsonResponse(response)
             return response
