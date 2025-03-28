@@ -5,7 +5,7 @@ class CloudflareResponse:
     status_code = 200
     content = ""
 
-    def __init__(self, content, status_code = 302, headers = None, media_type = "text/plain"):
+    def __init__(self, content, status_code = 200, headers = None, media_type = "text/plain"):
         if headers is None:
             headers = {}
         self.content = content
@@ -17,11 +17,11 @@ class CloudflareResponse:
         return Response(self.content, self.status_code, self.headers)
 
 class HTMLResponse(CloudflareResponse):
-    def __init__(self, content, status_code = 302, headers = None, media_type = "text/html"):
+    def __init__(self, content, status_code = 200, headers = None, media_type = "text/html"):
         super().__init__(content, status_code, headers, media_type)
 
 class JsonResponse(CloudflareResponse):
-    def __init__(self, content, status_code = 302, headers = None, media_type = "application/json"):
+    def __init__(self, content, status_code = 200, headers = None, media_type = "application/json"):
         super().__init__(content, status_code, headers, media_type)
 
     def convert(self):
