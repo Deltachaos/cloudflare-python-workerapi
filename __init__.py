@@ -69,8 +69,10 @@ class FastAPI:
 
         return decorator
 
-    def match_route(self, path):
-        for (route, method), handler in self.routes.items():
+    def match_route(self, path, method):
+        for (route, allowed_method), handler in self.routes.items():
+            if allowed_method != method:
+                continue
             pattern = re.sub(r"{(\w+)}", r"(?P<\1>[^/]+)", route)
             match = re.fullmatch(pattern, path)
             if match:
@@ -82,8 +84,8 @@ class FastAPI:
         path = url.path
         query = parse_qs(url.query)
 
-        handler, params = self.match_route(path)
-        if handler and request.method == "GET":
+        handler, params = self.match_route(path, request.method)
+        if handler:
             merged_params = {**query, **params}
             merged_params = {k: v[0] for k, v in merged_params.items()}
             response = await handler(**merged_params)
