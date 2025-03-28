@@ -1,27 +1,6 @@
 import re
-from workers import Response
 from urllib.parse import urlparse, parse_qs
-
-class CloudflareResponse:
-    headers = {}
-    status_code = 200
-    content = ""
-
-    def convert(self):
-        return Response(self.content, self.status_code, self.headers)
-
-class RedirectResponse(CloudflareResponse):
-    def __init__(self, url, status_code = 302):
-        self.status_code = status_code
-        self.headers["Location"] = url
-
-class JsonResponse(CloudflareResponse):
-    def __init__(self, data, status_code = 200):
-        self.status_code = status_code
-        self.content = data
-
-    def convert(self):
-        return Response.json(self.content, self.status_code, self.headers)
+from responses import CloudflareResponse, JsonResponse
 
 class FastAPI:
     def __init__(self):

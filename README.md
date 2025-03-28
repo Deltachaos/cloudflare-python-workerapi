@@ -33,12 +33,17 @@ A simple example using WorkerAPI:
 
 ```python
 from workerapi import FastAPI
+from workerapi.responses import RedirectResponse
 
 app = FastAPI()
 
 @app.get("/{user}")
 async def root(user):
     return {"some": "data" + user}
+
+@app.get("/test")
+async def root():
+    return RedirectResponse("https://www.example.com")
 
 on_fetch = app.on_fetch()
 ```
